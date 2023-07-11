@@ -27,8 +27,9 @@ def create_pdf(request):
 
     qs = RecipeIngredient.objects.filter(
         recipe_id__cart__user=request.user).values(
-            'ingredient__name', 'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
+            'ingredient__name',
+            'ingredient__measurement_unit'.annotate(
+                amount=Sum('amount')))
 
     for ingredient in qs:
         name = ingredient['ingredient__name']

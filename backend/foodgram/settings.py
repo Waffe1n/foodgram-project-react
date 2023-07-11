@@ -92,8 +92,8 @@ DATABASES = {
                           default='localhost'),
         'PORT': os.getenv('DB_PORT',
                           default='5432')
-                }
-            }
+    }
+}
 
 
 # Password validation

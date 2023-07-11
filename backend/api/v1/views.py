@@ -88,9 +88,9 @@ class RecipeViewSet(CreateDeleteObjMixin, viewsets.ModelViewSet):
         recipe = get_object_or_404(
             Recipe, pk=pk)
         obj = self.create_obj(
-                recipe,
-                FavoriteRecipeSerializer,
-                request)
+            recipe,
+            FavoriteRecipeSerializer,
+            request)
         return obj
 
     @favorite.mapping.delete

@@ -39,10 +39,9 @@ class ShowUserSerializer(UserSerializer):
     def get_is_subscribed(self, following):
         '''Get subscriptions info in api response.'''
         user = self.context.get('request').user
-        return (user.is_authenticated and Follow.objects.filter(
-            user=self.context.get('request').user,
-            following=following
-            ).exists())
+        return (user.is_authenticated and Follow.objects.
+                filter(user=self.context.get('request').user,
+                       following=following).exists())
 
 
 class Base64ImageField(serializers.ImageField):
@@ -118,17 +117,16 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, cart):
         '''Shows 'Cart' status of recipe.'''
         user = self.context.get('request').user
-        return (user.is_authenticated and Cart.objects.filter(
-                user=user,
-                recipe=cart).exists())
+        return (user.is_authenticated and Cart.objects.
+                filter(user=user,
+                       recipe=cart).exists())
 
     def get_is_favorited(self, favorited):
         '''Shows 'Favorites' status of recipe.'''
         user = self.context.get('request').user
-        return (user.is_authenticated and FavoriteRecipe.objects.filter(
-            user=user,
-            recipe=favorited
-            ).exists())
+        return (user.is_authenticated and FavoriteRecipe.objects.
+                filter(user=user,
+                       recipe=favorited).exists())
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
