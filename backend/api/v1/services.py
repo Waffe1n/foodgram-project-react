@@ -26,9 +26,9 @@ def create_pdf(request):
     textobject.setFont('DejaVuSerif', 16)
 
     qs = RecipeIngredient.objects.filter(
-            recipe_id__cart__user=request.user).values(
+        recipe_id__cart__user=request.user).values(
             'ingredient__name', 'ingredient__measurement_unit'
-            ).annotate(amount=Sum('amount'))
+        ).annotate(amount=Sum('amount'))
 
     for ingredient in qs:
         name = ingredient['ingredient__name']

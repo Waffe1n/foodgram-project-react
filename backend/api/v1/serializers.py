@@ -1,13 +1,13 @@
 import base64
 
-from django.core.files.base import ContentFile
-from django.db import transaction
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator, ValidationError
+from django.core.files.base import ContentFile
+from django.db import transaction
 
-from recipes.models import (Cart, FavoriteRecipe, Follow, Ingredient, Recipe,
-                            RecipeIngredient, Tag)
+from recipes.models import (Ingredient, Recipe, Tag, Follow,
+                            FavoriteRecipe, Cart, RecipeIngredient)
 from users.models import CustomUser
 
 
@@ -119,9 +119,8 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         '''Shows 'Cart' status of recipe.'''
         user = self.context.get('request').user
         return (user.is_authenticated and Cart.objects.filter(
-            user=user,
-            recipe=cart
-            ).exists())
+                user=user,
+                recipe=cart).exists())
 
     def get_is_favorited(self, favorited):
         '''Shows 'Favorites' status of recipe.'''
@@ -245,6 +244,7 @@ class FavoriteRecipeSerializer(serializers.ModelSerializer):
 
 
 class UserRecipesSerializer(serializers.ModelSerializer):
+    '''Serializes complete user's info with his recipes alltogether.'''
     recipes = serializers.SerializerMethodField()
     is_subscribed = serializers.BooleanField(read_only=True)
 
@@ -269,7 +269,7 @@ class UserRecipesSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
-
+    '''Serialize follow endpoints data.'''
     class Meta:
         model = Follow
         fields = ('user', 'following')
