@@ -3,40 +3,20 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, views, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import Cart, FavoriteRecipe, Ingredient, Recipe, Tag
-from users.models import CustomUser
-
 from .filters import IngredientFilter, RecipeFilter
+from .mixins import CreateDeleteObjMixin
 from .paginators import LimitPageNumberPagination
-from .permissions import IsAuthor
+from .permissions import IsAuthorOrReadOnly
 from .serializers import (CartSerializer, FavoriteRecipeSerializer, Follow,
                           FollowSerializer, IngredientSerializer,
                           RecipeSerializer, ShowRecipeSerializer,
                           TagSerializer, UserRecipesSerializer)
 from .services import create_pdf
-
-
-class CreateDeleteObjMixin:
-    '''Mixin for adding sample recipe-related create/delete methods.'''
-
-    def create_obj(self, instance, serializer, request):
-        serializer = serializer(
-            data={'user': request.user.id, 'recipe': instance.id, },
-            context={'request': request})
-
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete_obj(self, instance, model, request, error):
-        if model.objects.filter(user=request.user, recipe=instance).exists():
-            model.objects.filter(user=request.user, recipe=instance).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response({'errors': error, },
-                        status=status.HTTP_400_BAD_REQUEST)
+from recipes.models import Cart, FavoriteRecipe, Ingredient, Recipe, Tag
+from users.models import CustomUser
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -57,6 +37,7 @@ class RecipeViewSet(CreateDeleteObjMixin, viewsets.ModelViewSet):
     '''Base recipe list viewset.'''
     queryset = Recipe.objects.all()
     pagination_class = LimitPageNumberPagination
+    permission_classes = [IsAuthorOrReadOnly, ]
     filter_backends = [DjangoFilterBackend, ]
     filterset_class = RecipeFilter
     http_method_names = [
@@ -65,15 +46,6 @@ class RecipeViewSet(CreateDeleteObjMixin, viewsets.ModelViewSet):
         'patch',
         'delete'
     ]
-
-    def get_permissions(self):
-        if self.action == ('list' or 'retrieve'):
-            permission_classes = [AllowAny, ]
-        elif self.action == 'post':
-            permission_classes = [IsAuthenticated, ]
-        else:
-            permission_classes = [IsAuthor, ]
-        return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
         if self.action == ('list' or 'retrieve'):
@@ -169,6 +141,6 @@ class FollowListApiView(generics.ListAPIView):
 
     def get_queryset(self):
         qs = CustomUser.objects.filter(
-            follower__following__id=self.request.user.id)
+            subscriptions__user=self.request.user)
         qs.annotate(recipes_count=Count('author'))
         return qs

@@ -1,3 +1,4 @@
+import os
 from io import BytesIO
 
 from django.db.models import Sum
@@ -7,6 +8,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
+from foodgram.settings import BASE_DIR
 from recipes.models import RecipeIngredient
 
 
@@ -14,9 +16,12 @@ def create_pdf(request):
     '''Create PDF cart file.'''
 
     # Absolute path to TrueType cyrillic font
-    path = 'D:/Dev/foodgram-project-react/backend/static/data/DejaVuSerif.ttf'
-
-    pdfmetrics.registerFont(TTFont('DejaVuSerif', path))
+    path = 'static/data/DejaVuSerif.ttf'
+    pdfmetrics.registerFont(
+        TTFont(
+            'DejaVuSerif', os.path.join(BASE_DIR, path)
+        )
+    )
     buffer = BytesIO()
     doc = canvas.Canvas(buffer, pagesize=letter)
     doc.setFont('DejaVuSerif', 18)
@@ -26,10 +31,13 @@ def create_pdf(request):
     textobject.setFont('DejaVuSerif', 16)
 
     qs = RecipeIngredient.objects.filter(
-        recipe_id__cart__user=request.user).values(
-            'ingredient__name',
-            'ingredient__measurement_unit'.annotate(
-                amount=Sum('amount')))
+        recipe_id__cart__user=request.user
+    ).values(
+        'ingredient__name',
+        'ingredient__measurement_unit'
+    ).annotate(
+        amount=Sum('amount')
+    )
 
     for ingredient in qs:
         name = ingredient['ingredient__name']
