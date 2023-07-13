@@ -9,7 +9,7 @@ services:
       - ./.env
 
   backend:
-    image: waffe1n/foodgram_backend_server:latest
+    image: waffe1n/foodgram_backend_app:latest
     restart: always
     volumes:
       - static:/app/static/
