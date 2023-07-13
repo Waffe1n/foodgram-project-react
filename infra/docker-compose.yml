@@ -12,8 +12,8 @@ services:
     image: waffe1n/foodgram_backend_app:latest
     restart: always
     volumes:
-      - static:/app/static/
-      - media:/app/media/
+      - static_backend:/app/static/
+      - media_backend:/app/media/
     depends_on:
       - db
     ports:
