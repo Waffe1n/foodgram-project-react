@@ -3,12 +3,12 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
 
 EMPTY_VALUE = ' ——— '
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
