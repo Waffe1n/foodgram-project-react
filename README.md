@@ -1,9 +1,10 @@
-﻿ # Foodgram 
+﻿ # Foodgram
+**IP address**: http://84.201.136.149/ 
+
 ```
 username: admin
 password: admin
 ```
-
 ## About 
 
 **Foodgram** is your loayal grocery assistant app, helping you to choose a tasty recipes for all your planned meals, get their components in a short convenient PDF-list to take with you in a grocery store. Track new recipes of your favorite chefs, add them to favorite short-list not to lose them.
