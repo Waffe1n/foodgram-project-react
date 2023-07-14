@@ -32,6 +32,7 @@ def create_pdf(request):
 
     qs = RecipeIngredient.objects.filter(
         recipe_id__cart__user=request.user
+    ).order_by(
     ).values(
         'ingredient__name',
         'ingredient__measurement_unit'

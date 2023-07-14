@@ -1,4 +1,4 @@
-name: Django-app workflow
+name: Foodgram workflow 
 
 on: [push]
 
@@ -22,7 +22,7 @@ jobs:
         # запуск проверки проекта по flake8
         python -m flake8
 
-  build_and_push_to_docker_hub:
+  build_backend_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     needs: tests
@@ -39,12 +39,37 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
-      - name: Push to DockerHub
+      - name: Push backend to DockerHub
         uses: docker/build-push-action@v4
         with:
           context: ./backend/
           push: true
           tags: waffe1n/foodgram_backend_app:latest
+
+
+  build_frontend_and_push_to_docker_hub:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Push frontend to DockerHub
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend/
+          push: true
+          tags: waffe1n/foodgram_frontend_app:latest
 
   deploy:
     runs-on: ubuntu-latest

@@ -100,16 +100,11 @@ class IngredientsInRecipeSerializer(serializers.ModelSerializer):
 class IngredientAmountSerializer(serializers.ModelSerializer):
     '''Serializer to tie ingredient id with it's amount in short form.'''
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    amount = serializers.IntegerField()
 
     class Meta:
         model = RecipeIngredient
         fields = ('id', 'amount')
-
-    def validate_amount(self, value):
-        if value < 1:
-            raise ValidationError(
-                'Количество ингредиента не может быть меньше 1!'
-            )
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -204,18 +199,19 @@ class RecipeSerializer(serializers.ModelSerializer):
             'is_in_shopping_cart',
         )
 
-    '''Create RecipeIngredient relation model for recipe's ingredients.'''
     def set_ingredients(self, instance, ingredients):
         '''Set recipe's ingredients'''
         recipes_ingredients = []
         for ingredient in ingredients:
             iter_ingredient = ingredient.get('id')
             amount = ingredient.get('amount')
-            recipes_ingredients.append(RecipeIngredient(
-                recipe=instance,
-                ingredient=iter_ingredient,
-                amount=amount
-            ))
+            recipes_ingredients.append(
+                RecipeIngredient(
+                    recipe=instance,
+                    ingredient=iter_ingredient,
+                    amount=amount
+                )
+            )
         RecipeIngredient.objects.bulk_create(recipes_ingredients)
 
     @transaction.atomic
@@ -249,14 +245,14 @@ class RecipeSerializer(serializers.ModelSerializer):
         ).data
 
     def validate(self, data):
-        ingredients = []
+        ingredient_data = []
         for ingredient in data.get('ingredients'):
             if ingredient.get('amount') < 1:
                 raise serializers.ValidationError(
                     'Количество не может быть меньше 1.'
                 )
-            ingredients.append(ingredient.get('id'))
-        if len(set(ingredients)) < len(ingredients):
+            ingredient_data.append(ingredient.get('id'))
+        if len(set(ingredient_data)) < len(ingredient_data):
             raise serializers.ValidationError(
                 'Нельзя добавить ингредиент дважды.')
         if data.get('cooking_time') < 1:

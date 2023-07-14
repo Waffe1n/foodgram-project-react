@@ -135,4 +135,8 @@ node_modules/
 
 .vscode/
 
-static/recipes/
+backend/static/recipes/
+backend/static/admin/
+backend/static/rest_framework/
+staticfiles/
+media/
