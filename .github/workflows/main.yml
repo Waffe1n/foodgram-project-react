@@ -109,7 +109,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         source: "infra/docker-compose.yml"
-        target: foodgram-project-react    
+        target: foodgram-project-react/infra    
     - name: Executing remote ssh commands to deploy
       uses: appleboy/ssh-action@master
       with:
@@ -118,7 +118,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          cd foodgram-project-react/
+          cd foodgram-project-react/infra
           sudo docker-compose -f docker-compose.yml pull
           sudo docker-compose -f docker-compose.yml down
           sudo docker-compose -f docker-compose.yml up -d
