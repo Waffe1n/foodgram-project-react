@@ -33,7 +33,7 @@ services:
       - ./.env
 
   nginx:
-    image: waffe1n/foodgram_gateway
+    image: nginx:1.21.3-alpine
     ports:
       - "80:80"
     volumes:
