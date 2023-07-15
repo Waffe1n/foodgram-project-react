@@ -27,13 +27,20 @@ class RecipeIngredientInline(TabularInline):
 
 @register(Recipe)
 class RecipeAdmin(ModelAdmin):
-    list_display = ('pk', 'name', 'author', 'favorites_amount')
+    list_display = ('pk', 'name', 'author', 'favorites_amount', 'ingredient')
     list_filter = ('name', 'author', 'tags')
     empty_value_display = settings.EMPTY_VALUE
     inlines = [RecipeIngredientInline, ]
 
     def favorites_amount(self, obj):
         return obj.favorites.count()
+
+    def ingredient(self, obj):
+        return (
+            [recipe_ingredient.ingredient for
+             recipe_ingredient in
+             obj.recipe_ingredient.all()]
+        )
 
 
 @register(RecipeIngredient)

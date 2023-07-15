@@ -1,4 +1,3 @@
-from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, views, viewsets
@@ -141,6 +140,5 @@ class FollowListApiView(generics.ListAPIView):
 
     def get_queryset(self):
         qs = CustomUser.objects.filter(
-            subscriptions__user=self.request.user)
-        qs.annotate(recipes_count=Count('author'))
+            subscriptions__user=self.request.user).prefetch_related('author')
         return qs

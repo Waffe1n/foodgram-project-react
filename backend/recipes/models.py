@@ -48,6 +48,12 @@ class Ingredient(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         ordering = ['name', ]
+        constraints = [
+            models.constraints.UniqueConstraint(
+                fields=('name', 'measurement_unit'),
+                name='unique_ingredient'
+            ),
+        ]
 
     def __str__(self):
         return self.name
@@ -112,7 +118,7 @@ class RecipeIngredient(models.Model):
         verbose_name='ингридиент'
     )
     amount = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator, ],
+        validators=[MinValueValidator(1), ],
         verbose_name='количество'
     )
 

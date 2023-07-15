@@ -301,6 +301,7 @@ class UserRecipesSerializer(serializers.ModelSerializer):
     '''Serializes complete user's info with his recipes alltogether.'''
     recipes = serializers.SerializerMethodField()
     is_subscribed = serializers.BooleanField(read_only=True)
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -311,7 +312,8 @@ class UserRecipesSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
-            'recipes'
+            'recipes',
+            'recipes_count'
         )
 
     def get_recipes(self, obj):
@@ -326,6 +328,9 @@ class UserRecipesSerializer(serializers.ModelSerializer):
             recipes, many=True,
             context={'request': request}
         ).data
+
+    def get_recipes_count(self, obj):
+        return obj.author.count()
 
 
 class FollowSerializer(serializers.ModelSerializer):

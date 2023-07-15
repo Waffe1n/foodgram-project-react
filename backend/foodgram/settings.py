@@ -21,7 +21,7 @@ SECRET_KEY = os.getenv(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '84.201.136.149']
 
 
 # Application definition
@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'corsheaders',
     'rest_framework.authtoken',
     'django_filters',
     'djoser',
@@ -88,7 +87,7 @@ DATABASES = {
         'PASSWORD': os.getenv('POSTGRES_PASSWORD',
                               default='postgres'),
         'HOST': os.getenv('DB_HOST',
-                          default='localhost'),
+                          default='db'),
         'PORT': os.getenv('DB_PORT',
                           default='5432')
     }
