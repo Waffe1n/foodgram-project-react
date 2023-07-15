@@ -1,10 +1,9 @@
-﻿ # Foodgram
-**IP address**: http://84.201.136.149/ 
-
+﻿ # Foodgram 
 ```
 username: admin
 password: admin
 ```
+
 ## About 
 
 **Foodgram** is your loayal grocery assistant app, helping you to choose a tasty recipes for all your planned meals, get their components in a short convenient PDF-list to take with you in a grocery store. Track new recipes of your favorite chefs, add them to favorite short-list not to lose them.
@@ -39,7 +38,6 @@ sudo docker-compose -f docker-compose.yml up -d
 
 3. Make migrations and collect static
 ```
-sudo docker-compose exec backend python manage.py makemigrations
 sudo docker-compose exec backend python manage.py migrate
 sudo docker-compose exec backend python manage.py collectstatic
 ```
@@ -86,5 +84,5 @@ sudo docker-compose exec backend python manage.py loaddata dump.json
     
 -   `/api/users/subscriptions/`  **GET** request shows all subscriptions of current user. Available for authorized users.
 
-
-
+***Project developer*** 
+*Backend and infrastructure*: [Vladimir Dolgikh](https://github.com/Waffe1n)
