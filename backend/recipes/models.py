@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -29,7 +30,7 @@ class Tag(models.Model):
         verbose_name_plural = 'Теги'
         ordering = ['name', ]
 
-    def __str(self):
+    def __str__(self):
         return self.name
 
 
@@ -73,12 +74,12 @@ class Recipe(models.Model):
         Ingredient,
         through='RecipeIngredient',
         through_fields=('recipe', 'ingredient'),
-        verbose_name='Ингредиенты'
+        verbose_name='Ингредиенты',
+        blank=False
     )
     image = models.ImageField(
         upload_to='static/recipes/',
         blank=True,
-        null=True,
         verbose_name='Изображение'
     )
     tags = models.ManyToManyField(
@@ -101,6 +102,10 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        if self.ingredients is None:
+            raise ValidationError
 
 
 class RecipeIngredient(models.Model):
