@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -102,12 +101,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-
-    def clean(self):
-        if self.ingredients is None:
-            raise ValidationError(
-                'Необходимо добавить хотя бы один ингредиент!'
-            )
 
 
 class RecipeIngredient(models.Model):

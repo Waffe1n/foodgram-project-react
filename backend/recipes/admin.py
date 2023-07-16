@@ -1,5 +1,7 @@
+from django import forms
 from django.conf import settings
 from django.contrib.admin import ModelAdmin, TabularInline, register
+from django.core.exceptions import ValidationError
 
 from .models import (Cart, FavoriteRecipe, Ingredient, Recipe,
                      RecipeIngredient, Tag)
@@ -25,8 +27,28 @@ class RecipeIngredientInline(TabularInline):
     model = RecipeIngredient
 
 
+class RecipeForm(forms.ModelForm):
+    model = Recipe
+    fields = [
+        'name',
+        'author',
+        'text',
+        'image',
+        'ingredients',
+        'tags',
+        'cooking_time'
+    ]
+
+    def clean(self):
+        ingredients = self.cleaned_data.get('ingredients')
+        if len(ingredients) < 1:
+            raise ValidationError('Добавьте хотя бы один ингредиент.')
+        return self.cleaned_data
+
+
 @register(Recipe)
 class RecipeAdmin(ModelAdmin):
+    form = RecipeForm
     list_display = ('pk', 'name', 'author', 'favorites_amount', 'ingredient')
     list_filter = ('name', 'author', 'tags')
     empty_value_display = settings.EMPTY_VALUE
