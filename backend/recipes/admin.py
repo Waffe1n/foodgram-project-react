@@ -24,6 +24,7 @@ class TagAdmin(ModelAdmin):
 
 class RecipeIngredientInline(TabularInline):
     model = RecipeIngredient
+    validate_min = True
     min_num = 1
     extra = 2
 
