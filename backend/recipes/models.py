@@ -105,7 +105,9 @@ class Recipe(models.Model):
 
     def clean(self):
         if self.ingredients is None:
-            raise ValidationError
+            raise ValidationError(
+                'Необходимо добавить хотя бы один ингредиент!'
+            )
 
 
 class RecipeIngredient(models.Model):
