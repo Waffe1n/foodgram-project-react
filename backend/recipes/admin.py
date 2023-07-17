@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.admin import ModelAdmin, TabularInline, register
-
+from django.forms import models, ValidationError
 
 from .models import (Cart, FavoriteRecipe, Ingredient, Recipe,
                      RecipeIngredient, Tag)
@@ -22,7 +22,35 @@ class TagAdmin(ModelAdmin):
     empty_value_display = settings.EMPTY_VALUE
 
 
-class RecipeIngredientInline(TabularInline):
+class MinValidatedMixin:
+    validate_min = True
+
+    def get_formset(self, *args, **kwargs):
+        return super().get_formset(
+            validate_min=self.validate_min, *args, **kwargs
+        )
+
+
+class RecipeIngredientFormset(models.BaseInlineFormSet):
+    def is_valid(self):
+        return (super(RecipeIngredientFormset, self).is_valid()
+                and not any([bool(exc) for exc in self.errors]))
+
+    def clean(self):
+        count = 0
+        for form in self.forms:
+            try:
+                if form.cleaned_data:
+                    count += 1
+            except AttributeError:
+                # avoid raising AttributeError for empty cleaned_data
+                pass
+        if count < 1:
+            raise ValidationError()
+
+
+class RecipeIngredientInline(MinValidatedMixin, TabularInline):
+    formset = RecipeIngredientFormset
     model = RecipeIngredient
     validate_min = True
     min_num = 1
